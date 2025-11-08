@@ -9,8 +9,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import br.edu.utfpr.calculaimc.util.ImcUtil
 import java.util.Locale
-import kotlin.math.pow
 
 class MainActivity : AppCompatActivity() {
 
@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
 
         val locale = Locale.getDefault().language
         val countryCode = Locale.getDefault().country
-        val imc = calcularImc(peso, altura, countryCode)
+        val imc = ImcUtil.calcularImc(peso, altura, countryCode)
 
         val imcFormatado = String.format(Locale.getDefault(), "%.2f", imc)
 
@@ -76,14 +76,6 @@ class MainActivity : AppCompatActivity() {
             tvResultado.text = imcFormatado
         } else {
             tvResultado.text = imcFormatado.replace(".", ",")
-        }
-    }
-
-    private fun calcularImc(peso: Double, altura: Double, countryCode: String): Double {
-        return if (countryCode.equals("US", ignoreCase = true)) {
-            703 * (peso / altura.pow(2.0))
-        } else {
-            peso / altura.pow(2.0)
         }
     }
 

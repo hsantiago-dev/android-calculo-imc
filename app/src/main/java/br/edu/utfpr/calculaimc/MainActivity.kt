@@ -34,11 +34,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun init() {
-        etPeso = findViewById(R.id.peso)
-        etAltura = findViewById(R.id.altura)
-        tvResultado = findViewById(R.id.resultado)
-        btCalcular = findViewById(R.id.btCalcular)
-        btLimpar = findViewById(R.id.btLimpar)
+        etPeso = findViewById(R.id.etWeight)
+        etAltura = findViewById(R.id.etHeight)
+        tvResultado = findViewById(R.id.tvResult)
+        btCalcular = findViewById(R.id.btCalculate)
+        btLimpar = findViewById(R.id.btClean)
 
         btCalcular.setOnClickListener {
             calcular()
@@ -49,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         btLimpar.setOnLongClickListener {
-            Toast.makeText(this, "Botão de limpar a tela", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.clean_long_click), Toast.LENGTH_SHORT).show()
             true
         }
     }
@@ -59,21 +59,37 @@ class MainActivity : AppCompatActivity() {
         val altura = etAltura.text.toString().toDoubleOrNull()
 
         if (peso == null) {
-            etPeso.error = "Peso deve ser informado"
+            etPeso.error = getString(R.string.weight_error)
             return
         } else if (altura == null) {
-            etAltura.error = "Altura deve ser informada"
+            etAltura.error = getString(R.string.height_error)
             return
         }
 
-        val imc = peso / altura.pow(2.0)
+        val locale = Locale.getDefault().language
+        val countryCode = Locale.getDefault().country
+        val imc = calcularImc(peso, altura, countryCode)
 
-        tvResultado.text = String.format(Locale.getDefault(), "%.2f", imc).replace(".", ",")
+        val imcFormatado = String.format(Locale.getDefault(), "%.2f", imc)
+
+        if (locale.equals("en", ignoreCase = true)) {
+            tvResultado.text = imcFormatado
+        } else {
+            tvResultado.text = imcFormatado.replace(".", ",")
+        }
+    }
+
+    private fun calcularImc(peso: Double, altura: Double, countryCode: String): Double {
+        return if (countryCode.equals("US", ignoreCase = true)) {
+            703 * (peso / altura.pow(2.0))
+        } else {
+            peso / altura.pow(2.0)
+        }
     }
 
     private fun limpar() {
         etPeso.text.clear()
         etAltura.text.clear()
-        tvResultado.text = "0,0"
+        tvResultado.text = getString(R.string.zeros)
     }
 }
